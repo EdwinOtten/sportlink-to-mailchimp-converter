@@ -19,7 +19,7 @@ jobs:
       run: npm run build
 
     - name: Publish to npm
-      uses: pascalgn/npm-publish-action@1.1.0
+      uses: pascalgn/npm-publish-action@1.2.0
       with:
         tag_name: "%s"
         tag_message: "%s"
