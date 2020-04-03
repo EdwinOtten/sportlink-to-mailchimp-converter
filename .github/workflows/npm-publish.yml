@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install dependencies
+    - name: Install dependencies 
       run: npm ci
     
     - name: Build
@@ -23,6 +23,7 @@ jobs:
       with:
         tag_name: "%s"
         tag_message: "%s"
+        commit_pattern: "[\\s\\S]*" # Match any commit message (matches both whitespace and non-whitespace characters)
       env: # More info about the environment variables in the README
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this as is, it's automatically generated
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} # You need to set this in your repo settings
