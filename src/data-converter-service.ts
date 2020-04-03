@@ -22,7 +22,7 @@ export class DataConverterConfigService implements IDataConverterService {
     },
     outputStep: {
       title: 'Mailchimp output',
-      description: 'Import this into mailchimp'
+      description: 'Import this into mailchimp.'
     }
   };
 
