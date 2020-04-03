@@ -10,7 +10,7 @@ export class DataConverterConfigService implements IDataConverterService {
   inputFileExtensions = ['.csv'];
 
   labels = {
-    title: 'Sportlink to Mailchimp converter',
+    title: "Sportlink to Mailchimp converter"
     subtitle: 'A tool to convert a Sportlink export into a file that can be imported into Mailchimp.',
     sourceStep: {
       title: 'Sportlink source',
