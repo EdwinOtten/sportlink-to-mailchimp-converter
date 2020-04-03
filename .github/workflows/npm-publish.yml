@@ -23,7 +23,7 @@ jobs:
       with:
         tag_name: "%s"
         tag_message: "%s"
-        commit_pattern: "[\\s\\S]*" # Match any commit message (matches both whitespace and non-whitespace characters)
+        commit_pattern: "^(?:Release|Version) (\\S+)" # Match a commit message if it starts with "Release " or "Version " followed by the version specified in package.json
       env: # More info about the environment variables in the README
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this as is, it's automatically generated
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} # You need to set this in your repo settings
