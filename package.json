@@ -31,7 +31,7 @@
   "homepage": "https://github.com/EdwinOtten/sportlink-to-mailchimp-converter#readme",
   "devDependencies": {
     "tslint": "^6.1.0",
-    "typescript": "^3.8.3"
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@types/papaparse": "^5.0.3",
