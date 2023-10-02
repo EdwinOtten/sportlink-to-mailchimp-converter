@@ -6,40 +6,35 @@ import * as Papa from 'papaparse'
 
 export class SportlinkToMailchimpConverter {
 
-  static async convertFileToPreview(file: File): Promise<PreviewResult> {
-    const input = await parseCsv(file)
-    const rows = input.data
-      .filter(row => !isNullOrEmpty(row['E-mail']))
-      .map(sporlinkRowToContact)
-      .reduce((accumulator: { [key: string]: ContactGroup }, contact) => {
-        if (!accumulator.hasOwnProperty(contact.email)) {
-          accumulator[contact.email] = { email: contact.email, contacts: []}
-        }
-        accumulator[contact.email].contacts.push()
-        return accumulator
-      }, {})
-      .map(Object.getOwnProperties)
-      .map(contactGroupToMailchimpContact)
-
-    return {
-      columns: Object.getOwnPropertyNames(rows[0]),
-      rows
-    }
-  }
-
-  static async convertFileToOutput(file: File): Promise<OutputResult> {
-    const data = await this.convertFileToPreview(file)
-    const csvData = Papa.unparse(data.rows, {
-      quotes: true
+  static async convertFileToPreview(file: File): Promise<PreviewResult<MailchimpSubscriber>> {
+    return parseFileAndConvert(file).then((value) => {
+      return {
+        columns: Object.getOwnPropertyNames(mailchimpSubscriberProperties),
+        rows: value
+      }
     })
-
-    const originalFilename = file.name.substring(0, file.name.lastIndexOf('.'))
-    return {
-      mimetype: 'text/csv;charset=utf-8;',
-      filename: originalFilename + '_converted_to_mailchimp.csv',
-      data: csvData
-    };
   }
+
+  static async convertFileToOutput(file: File): Promise<OutputResult<MailchimpSubscriber>> {
+    const originalFilename = file.name.substring(0, file.name.lastIndexOf('.'))
+
+    return parseFileAndConvert(file).then((value) => {
+      return {
+        mimetype: 'text/csv;charset=utf-8;',
+        filename: originalFilename + '_converted_to_mailchimp.csv',
+        data: value
+      }
+    })
+  }
+}
+
+interface SportlinkRow {
+  'E-mail': string
+  Roepnaam: string;
+  'Tussenvoegsel(s)': string;
+  Achternaam: string;
+  Leeftijdscategorie: string
+  'Lidsoorten vereniging': string;
 }
 
 interface SportlinkContact {
@@ -49,13 +44,32 @@ interface SportlinkContact {
   tags: string[]
 }
 
-interface ContactGroup {
-  email: string
-  contacts: SportlinkContact[]
+interface MailchimpSubscriber {
+  'Email Address': string
+  'First Name': string
+  'Last Name': string
+  Tags: string[]
+}
+type MailchimpSubscriberObject = Record<(keyof MailchimpSubscriber), undefined>;
+const mailchimpSubscriberProperties: MailchimpSubscriberObject = {
+  'Email Address': undefined,
+  'First Name': undefined,
+  'Last Name': undefined,
+  Tags: undefined
+}
+
+
+const parseFileAndConvert = async (file: File): Promise<MailchimpSubscriber[]> => {
+  return parseCsv(file).then((value): MailchimpSubscriber[] => {
+    const sportlinkContacts = value.data
+      .filter(row => !isNullOrEmpty(row['E-mail']))
+      .map(sportlinkRowToContact)
+    return sportlinkContactsToMailchimpSubscribers(sportlinkContacts)
+  })
 }
 
 const membershipTypes = ['Lopers', 'Gastlid', 'Recreanten', 'Nordic Walking', 'Vrienden van Groene Ster', 'Overigen']
-const sporlinkRowToContact = (row: any): SportlinkContact => {
+const sportlinkRowToContact = (row: SportlinkRow): SportlinkContact => {
   const tags: string[] = []
   const categorie = row.Leeftijdscategorie
   if (row['Lidsoorten vereniging'] && row['Lidsoorten vereniging'].length > 0) {
@@ -70,44 +84,64 @@ const sporlinkRowToContact = (row: any): SportlinkContact => {
         }
       })
     })
-  }  else {
+  } else {
     tags.push(categorie)
   }
 
   return {
     email: row['E-mail'],
     firstname: row.Roepnaam,
-    lastname: (((row['Tussenvoegsel(s)'] ? row['Tussenvoegsel(s)'] : '') + ' ' + row.Achternaam) as string).trim(),
+    lastname: (((row['Tussenvoegsel(s)'] ? row['Tussenvoegsel(s)'] : '') + ' ' + row.Achternaam)).trim(),
     tags,
   }
 }
-const contactGroupToMailchimpContact = (contactGroup: ContactGroup) => {
+
+const sportlinkContactsToMailchimpSubscribers = (contacts: SportlinkContact[]): MailchimpSubscriber[] => {
+  const rows: MailchimpSubscriber[] = []
+  contacts
+    .reduce((accumulator: Map<string, SportlinkContact[]>, contact) => {
+      const existing = accumulator.get(contact.email)
+      if (existing == undefined) {
+        return accumulator.set(contact.email, [contact])
+      } else {
+        return accumulator.set(contact.email, [...existing, contact])
+      }
+    }, new Map<string, SportlinkContact[]>())
+    .forEach((value, key) => {
+      rows.push(contactGroupToMailchimpContact(key, value))
+    })
+
+  return rows
+}
+
+const contactGroupToMailchimpContact = (email: string, contacts: SportlinkContact[]): MailchimpSubscriber => {
   return {
-    'Email Address': contactGroup.email,
-    'First Name': contactGroup.contacts[0].firstname,
-    'Last Name': contactGroup.contacts[0].lastname,
-    Tags: contactGroup.contacts.reduce((acc: string[], cur) => {
+    'Email Address': email,
+    'First Name': contacts[0].firstname,
+    'Last Name': contacts[0].lastname,
+    Tags: contacts.reduce((acc: string[], cur) => {
       return acc.concat(cur.tags)
     }, []),
   }
 }
 
 const contains = (haystack: string, needle: string) => haystack.toLowerCase().indexOf(needle.toLowerCase()) >= 0
+
 const isNullOrEmpty = (text: string) => text === undefined || text === null || text.length <= 0
 
-const parseCsv = async(file: File): Promise<Papa.ParseResult> => {
+const parseCsv = async (file: File): Promise<Papa.ParseResult<SportlinkRow>> => {
   return new Promise((complete, error) => {
-    Papa.parse(file, {
+    Papa.parse<SportlinkRow>(file, {
       skipEmptyLines: true,
       dynamicTyping: true,
       quoteChar: '|',
       delimiter: ';',
       header: true,
       transformHeader(header) {
-        return header.trim().replace('"', '').replace('"', '');
+        return header.trim().replace('"', '').replace('"', '')
       },
       transform(value) {
-        return value.trim().replace('"', '').replace('"', '');
+        return value.trim().replace('"', '').replace('"', '')
       },
       error,
       complete
@@ -115,13 +149,13 @@ const parseCsv = async(file: File): Promise<Papa.ParseResult> => {
   })
 }
 
-interface PreviewResult {
+interface PreviewResult<T> {
   columns: string[]
-  rows: any
+  rows: T[]
 }
 
-interface OutputResult {
-  data: any
+interface OutputResult<T> {
+  data: T[]
   filename: string
   mimetype: string
 }
