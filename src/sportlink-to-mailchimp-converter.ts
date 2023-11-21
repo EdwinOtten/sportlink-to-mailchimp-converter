@@ -3,10 +3,11 @@
  */
 
 import * as Papa from 'papaparse'
+import { LocalFile } from 'papaparse'
 
 export class SportlinkToMailchimpConverter {
 
-  static async convertFileToPreview(file: File): Promise<PreviewResult<MailchimpSubscriber>> {
+  static async convertFileToPreview(file: LocalFile): Promise<PreviewResult<MailchimpSubscriber>> {
     return parseFileAndConvert(file).then((value) => {
       return {
         columns: Object.getOwnPropertyNames(mailchimpSubscriberProperties),
@@ -15,14 +16,11 @@ export class SportlinkToMailchimpConverter {
     })
   }
 
-  static async convertFileToOutput(file: File): Promise<OutputResult<MailchimpSubscriber>> {
-    const originalFilename = file.name.substring(0, file.name.lastIndexOf('.'))
-
+  static async convertFileToOutput(file: LocalFile): Promise<OutputResult<string>> {
     return parseFileAndConvert(file).then((value) => {
       return {
         mimetype: 'text/csv;charset=utf-8;',
-        filename: originalFilename + '_converted_to_mailchimp.csv',
-        data: value
+        data: Papa.unparse(value, { header: true })
       }
     })
   }
@@ -59,13 +57,11 @@ const mailchimpSubscriberProperties: MailchimpSubscriberObject = {
 }
 
 
-const parseFileAndConvert = async (file: File): Promise<MailchimpSubscriber[]> => {
-  return parseCsv(file).then((value): MailchimpSubscriber[] => {
-    const sportlinkContacts = value.data
-      .filter(row => !isNullOrEmpty(row['E-mail']))
-      .map(sportlinkRowToContact)
-    return sportlinkContactsToMailchimpSubscribers(sportlinkContacts)
-  })
+const parseFileAndConvert = async (file: LocalFile): Promise<MailchimpSubscriber[]> => {
+ const rows = await parseCsv(file)
+ return sportlinkContactsToMailchimpSubscribers(rows
+ .filter(row => !isNullOrEmpty(row['E-mail']))
+ .map(sportlinkRowToContact))
 }
 
 const membershipTypes = ['Lopers', 'Gastlid', 'Recreanten', 'Nordic Walking', 'Vrienden van Groene Ster', 'Overigen']
@@ -129,8 +125,8 @@ const contains = (haystack: string, needle: string) => haystack.toLowerCase().in
 
 const isNullOrEmpty = (text: string) => text === undefined || text === null || text.length <= 0
 
-const parseCsv = async (file: File): Promise<Papa.ParseResult<SportlinkRow>> => {
-  return new Promise((complete, error) => {
+function parseCsv(file: LocalFile) {
+  return new Promise<SportlinkRow[]>((resolve, reject) => {
     Papa.parse<SportlinkRow>(file, {
       skipEmptyLines: true,
       dynamicTyping: true,
@@ -143,8 +139,8 @@ const parseCsv = async (file: File): Promise<Papa.ParseResult<SportlinkRow>> => 
       transform(value) {
         return value.trim().replace('"', '').replace('"', '')
       },
-      error,
-      complete
+      error: (error: Error) => reject(error),
+      complete: (results: Papa.ParseResult<SportlinkRow>) => resolve(results.data)
     })
   })
 }
@@ -155,7 +151,6 @@ interface PreviewResult<T> {
 }
 
 interface OutputResult<T> {
-  data: T[]
-  filename: string
+  data: T
   mimetype: string
 }

@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "prepublish": "tsc",
     "test": "jest",
+    "test:coverage": "jest --coverage=true --coverageDirectory=./coverage",
     "watch": "tsc --watch"
   },
   "repository": {
