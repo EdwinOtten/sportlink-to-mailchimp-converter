@@ -81,7 +81,7 @@ const sportlinkRowToContact = (row: SportlinkRow): SportlinkContact => {
       })
     })
   } else {
-    tags.push(categorie)
+    tags.push('Overigen')
   }
 
   return {
