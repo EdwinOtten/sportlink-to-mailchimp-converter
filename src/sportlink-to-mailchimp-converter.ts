@@ -139,9 +139,6 @@ function parseCsv(file: LocalFile) {
       transform(value) {
         return value.trim().replace('"', '').replace('"', '')
       },
-      error: (error: Error) => {
-        reject(error)
-      },
       complete: (results: Papa.ParseResult<SportlinkRow>) => {
         if (results.errors.length > 0) {
           reject(results.errors)
