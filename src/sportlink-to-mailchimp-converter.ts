@@ -130,7 +130,7 @@ function parseCsv(file: LocalFile) {
     Papa.parse<SportlinkRow>(file, {
       skipEmptyLines: true,
       dynamicTyping: true,
-      quoteChar: '|',
+      quoteChar: '"',
       delimiter: ';',
       header: true,
       transformHeader(header) {
@@ -139,8 +139,16 @@ function parseCsv(file: LocalFile) {
       transform(value) {
         return value.trim().replace('"', '').replace('"', '')
       },
-      error: (error: Error) => reject(error),
-      complete: (results: Papa.ParseResult<SportlinkRow>) => resolve(results.data)
+      error: (error: Error) => {
+        reject(error)
+      },
+      complete: (results: Papa.ParseResult<SportlinkRow>) => {
+        if (results.errors.length > 0) {
+          reject(results.errors)
+        } else {
+          resolve(results.data)
+        }
+      }
     })
   })
 }

@@ -27,7 +27,7 @@ describe('SportlinkToMailchimpConverter', () => {
         columns: ['Email Address', 'First Name', 'Last Name', 'Tags'],
         rows: [{
           "Email Address": "jane.doe@example.com",
-          "First Name": "John",
+          "First Name": "Jane",
           "Last Name": "Doe",
           "Tags": ['Vrienden van Groene Ster', 'Lopers'],
         },
@@ -64,10 +64,13 @@ describe('SportlinkToMailchimpConverter', () => {
 
     it('should reject invalid file', async () => {
       // Arrange
-      const file = streamFromString('"\'";,\'\'"|,;;,{')
+      const file = streamFromString(`Name; Age; Occupation
+John Doe; 35; Software Engineer
+Jane Doe; 30; Doctor
+Robert; Smith; 40; Lawyer; Senior; lala; lalal2; "llaala4`)
 
       // Act & assert
-      await expect(SportlinkToMailchimpConverter.convertFileToOutput(file)).rejects.toEqual('some')
+      await expect(SportlinkToMailchimpConverter.convertFileToOutput(file)).rejects.toHaveLength(1)
     })
 
     it('should return expected object', async () => {
@@ -75,7 +78,7 @@ describe('SportlinkToMailchimpConverter', () => {
       const file = streamFromString(EXAMPLE_CSV)
       const expected = {
         data: `Email Address,First Name,Last Name,Tags
-jane.doe@example.com,John,Doe,"Vrienden van Groene Ster,Lopers"
+jane.doe@example.com,Jane,Doe,"Vrienden van Groene Ster,Lopers"
 alice.henderson@example.com,Alice,Henderson,Overigen
 peter.von.zillertal@example.com,Peter,von Zillertal,Overigen
 patricia.von.zillertal@example.com,Patricia,von Zillertal,"Recreanten,Atletiek Masters Vrouwen"`.replace(/(\r\n|\n|\r)/gm,'\r\n'),
