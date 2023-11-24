@@ -58,10 +58,10 @@ const mailchimpSubscriberProperties: MailchimpSubscriberObject = {
 
 
 const parseFileAndConvert = async (file: LocalFile): Promise<MailchimpSubscriber[]> => {
- const rows = await parseCsv(file)
- return sportlinkContactsToMailchimpSubscribers(rows
- .filter(row => !isNullOrEmpty(row['E-mail']))
- .map(sportlinkRowToContact))
+  const rows = await parseCsv(file)
+  return sportlinkContactsToMailchimpSubscribers(rows
+    .filter(row => !isNullOrEmpty(row['E-mail']))
+    .map(sportlinkRowToContact))
 }
 
 const membershipTypes = ['Lopers', 'Gastlid', 'Recreanten', 'Nordic Walking', 'Vrienden van Groene Ster', 'Overigen']
@@ -87,7 +87,8 @@ const sportlinkRowToContact = (row: SportlinkRow): SportlinkContact => {
   return {
     email: row['E-mail'],
     firstname: row.Roepnaam,
-    lastname: (((row['Tussenvoegsel(s)'] ? row['Tussenvoegsel(s)'] : '') + ' ' + row.Achternaam)).trim(),
+    // lastname: (((row['Tussenvoegsel(s)'] ? row['Tussenvoegsel(s)'] : '') + ' ' + row.Achternaam)).trim(),
+    lastname: row.Achternaam,
     tags,
   }
 }
@@ -126,8 +127,10 @@ const contains = (haystack: string, needle: string) => haystack.toLowerCase().in
 const isNullOrEmpty = (text: string) => text === undefined || text === null || text.length <= 0
 
 function parseCsv(file: LocalFile) {
+
   return new Promise<SportlinkRow[]>((resolve, reject) => {
-    Papa.parse<SportlinkRow>(file, {
+
+    const config: Papa.ParseLocalConfig<SportlinkRow, LocalFile> = {
       skipEmptyLines: true,
       dynamicTyping: true,
       quoteChar: '"',
@@ -140,13 +143,15 @@ function parseCsv(file: LocalFile) {
         return value.trim().replace('"', '').replace('"', '')
       },
       complete: (results: Papa.ParseResult<SportlinkRow>) => {
-        if (results.errors.length > 0) {
+        if (results.errors && results.errors.length > 0) {
           reject(results.errors)
         } else {
           resolve(results.data)
         }
       }
-    })
+    }
+
+    Papa.parse<SportlinkRow, LocalFile>(file, config)
   })
 }
 

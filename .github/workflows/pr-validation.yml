@@ -13,8 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Code coverage summary report
-        uses: ArtiomTr/jest-coverage-report-action@v2
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run linting
         run: npm run lint
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run tests & generate code coverage summary
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          skip-step: install
