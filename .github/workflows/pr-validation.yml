@@ -3,7 +3,7 @@ name: PR Validation
 
 # Trigger with every PR to master
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - master
 
@@ -19,7 +19,7 @@ jobs:
       - name: Run linting
         run: npm run lint
 
-      - name: Run build
+      - name: Build
         run: npm run build
 
       - name: Run tests & generate code coverage summary
