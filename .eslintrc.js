@@ -8,7 +8,9 @@ module.exports = {
     parserOptions: {
         project: ["tsconfig.json"],
     },
-    ignorePatterns: [],
     plugins: ['@typescript-eslint'],
     root: true,
+    rules: {
+        semi: ["error", "never"]
+    }
   };
