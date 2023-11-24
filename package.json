@@ -7,7 +7,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "prepublish": "tsc",
     "test": "jest",
     "test:coverage": "jest --coverage=true --coverageDirectory=./coverage",
@@ -35,7 +35,9 @@
     "@types/jest": "^29.5.5",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
+    "blob-polyfill": "^7.0.20220408",
     "eslint": "^8.50.0",
+    "fs": "^0.0.1-security",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
