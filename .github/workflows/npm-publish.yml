@@ -1,11 +1,13 @@
+# This workflow builds the package and uploads it to the NPM repository
 name: Publish to NPM
 
+# Trigger with every commit on master
 on:
   push:
-    branches: [ master ]
+    branches:
+    - master
 
 jobs:
-  # This workflow contains a single job called "build"
   build_and_publish_package:
     runs-on: ubuntu-latest
 

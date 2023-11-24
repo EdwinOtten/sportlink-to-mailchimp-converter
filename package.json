@@ -7,9 +7,10 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "prepublish": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:coverage": "jest --coverage=true --coverageDirectory=./coverage",
     "watch": "tsc --watch"
   },
   "repository": {
@@ -30,9 +31,13 @@
   },
   "homepage": "https://github.com/EdwinOtten/sportlink-to-mailchimp-converter#readme",
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.5",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "eslint": "^8.50.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
