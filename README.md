@@ -7,7 +7,7 @@ A node module that converts Sportlink exports (.csv) into a csv you can import i
     ```
     npm install sportlink-to-mailchimp-converter
     ```
-2. Import the module in your code, and use it:
+2. Import the module in your code:
     ```js
     // Javascript
     const SportlinkToMailchimpConverter = require('sportlink-to-mailchimp-converter')
@@ -16,7 +16,6 @@ A node module that converts Sportlink exports (.csv) into a csv you can import i
     // Typescript
     import { SportlinkToMailchimpConverter } from 'sportlink-to-mailchimp-converter'
     ```
-3. Import the module in your code, and use it:
-    ```js
-    console.log(SportlinkToMailchimpConverter.convertFileToOutput(file))
+3. And use it:
+    ```js  console.log(SportlinkToMailchimpConverter.convertFileToOutput(file))
     ```
