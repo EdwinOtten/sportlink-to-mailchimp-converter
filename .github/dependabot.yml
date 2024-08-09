@@ -13,7 +13,12 @@ updates:
     assignees:
     - "EdwinOtten"
     groups:
-      minorUpdates:
+      securityUpdates:
+        applies-to: security-updates
+        patterns:
+        - "*"
+      versionUpdates:
+        applies-to: version-updates
         patterns:
         - "*"
         update-types:
