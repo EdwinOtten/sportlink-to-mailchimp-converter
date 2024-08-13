@@ -9,7 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     open-pull-requests-limit: 3 # This option has no impact on security updates, which have a separate limit
     schedule:
-      interval: "monthly"
+      interval: "daily"
     assignees:
     - "EdwinOtten"
     groups:
