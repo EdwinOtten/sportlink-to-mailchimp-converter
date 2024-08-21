@@ -23,3 +23,7 @@ A node module that converts Sportlink exports (.csv) into a csv you can import i
     ```js
     console.log(SportlinkToMailchimpConverter.convertFileToOutput(file))
     ```
+
+## Examples
+
+You can use [example-input.csv](/example-input.csv) to test.
