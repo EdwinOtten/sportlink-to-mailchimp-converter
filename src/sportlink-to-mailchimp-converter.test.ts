@@ -10,13 +10,21 @@ function streamFromString(text: string) {
 }
 
 const EXAMPLE_CSV = `Roepnaam;Achternaam;E-mail;Leeftijdscategorie;Lidsoorten vereniging
-Jane;Doe;jane.doe@example.com;Masters Vrouwen;Vrienden van Groene Ster - Recreatief - Week
-John;Doe;jane.doe@example.com;Senioren Mannen;Lopers met wedstrijd licentie - recreatief - Week
+Jane;Doe;family.doe@example.com;Masters Vrouwen;Vrienden van mijn vereniging - Recreatief - Week, Senioren Groene Ster - Atletiek - Week
+John;Doe;family.doe@example.com;Senioren Mannen;Lopers met wedstrijd licentie - recreatief - Week
 Alice;Henderson;alice.henderson@example.com;Masters Vrouwen;
 Peter;von Zillertal;peter.von.zillertal@example.com;Masters Mannen;Overigen - Recreatief - Week
 Patricia;von Zillertal;patricia.von.zillertal@example.com;Masters Vrouwen;Recreanten - recreatief - Week, Senioren Groene Ster - Atletiek - Week`
 
 describe('SportlinkToMailchimpConverter', () => {
+  let converter: SportlinkToMailchimpConverter
+
+  beforeAll(() => {
+    converter = new SportlinkToMailchimpConverter({
+      nonAthleticsMembershipTypes: ['Lopers', 'Gastlid', 'Recreanten', 'Nordic Walking', 'Vrienden van mijn vereniging', 'Overigen'],
+      athleticsMembershipTypes: ['Atletiek']
+    })
+  })
 
   describe('convertFileToPreview', () => {
 
@@ -26,16 +34,16 @@ describe('SportlinkToMailchimpConverter', () => {
       const expected = {
         columns: ['Email Address', 'First Name', 'Last Name', 'Tags'],
         rows: [{
-          "Email Address": "jane.doe@example.com",
+          "Email Address": "family.doe@example.com",
           "First Name": "Jane",
           "Last Name": "Doe",
-          "Tags": ['Vrienden van Groene Ster', 'Lopers'],
+          "Tags": ['Vrienden van mijn vereniging', 'Atletiek Masters', 'Lopers'],
         },
         {
           "Email Address": "alice.henderson@example.com",
           "First Name": "Alice",
           "Last Name": "Henderson",
-          "Tags": ['Overigen'],
+          "Tags": ['Atletiek Masters'],
         },
         {
           "Email Address": "peter.von.zillertal@example.com",
@@ -47,12 +55,12 @@ describe('SportlinkToMailchimpConverter', () => {
           "Email Address": "patricia.von.zillertal@example.com",
           "First Name": "Patricia",
           "Last Name": "von Zillertal",
-          "Tags": ['Recreanten', 'Atletiek Masters Vrouwen'],
+          "Tags": ['Recreanten', 'Atletiek Masters'],
         }]
       }
 
       // Act
-      const result = await SportlinkToMailchimpConverter.convertFileToPreview(file)
+      const result = await converter.convertFileToPreview(file)
 
       // Assert
       expect(result).toMatchObject(expected)
@@ -70,7 +78,7 @@ Jane Doe; 30; Doctor
 Robert; Smith; 40; Lawyer; Senior; lala; lalal2; "llaala4`)
 
       // Act & assert
-      await expect(SportlinkToMailchimpConverter.convertFileToOutput(file)).rejects.toHaveLength(1)
+      await expect(converter.convertFileToOutput(file)).rejects.toHaveLength(1)
     })
 
     it('should return expected object', async () => {
@@ -78,15 +86,15 @@ Robert; Smith; 40; Lawyer; Senior; lala; lalal2; "llaala4`)
       const file = streamFromString(EXAMPLE_CSV)
       const expected = {
         data: `Email Address,First Name,Last Name,Tags
-jane.doe@example.com,Jane,Doe,"Vrienden van Groene Ster,Lopers"
-alice.henderson@example.com,Alice,Henderson,Overigen
+family.doe@example.com,Jane,Doe,"Vrienden van mijn vereniging,Atletiek Masters,Lopers"
+alice.henderson@example.com,Alice,Henderson,Atletiek Masters
 peter.von.zillertal@example.com,Peter,von Zillertal,Overigen
-patricia.von.zillertal@example.com,Patricia,von Zillertal,"Recreanten,Atletiek Masters Vrouwen"`.replace(/(\r\n|\n|\r)/gm,'\r\n'),
+patricia.von.zillertal@example.com,Patricia,von Zillertal,"Recreanten,Atletiek Masters"`.replace(/(\r\n|\n|\r)/gm, '\r\n'),
         mimetype: 'text/csv;charset=utf-8;'
       }
 
       // Act
-      const result = await SportlinkToMailchimpConverter.convertFileToOutput(file)
+      const result = await converter.convertFileToOutput(file)
 
       // Assert
       expect(result).toMatchObject(expected)
