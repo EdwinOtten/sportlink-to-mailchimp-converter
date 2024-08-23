@@ -3,7 +3,7 @@
  */
 
 import * as Papa from 'papaparse'
-import { LocalFile } from 'papaparse'
+import { LocalFile, ParseError } from 'papaparse'
 import { MailchimpSubscriber, MailchimpSubscriberObject, OutputResult, PreviewResult, SportlinkContact, SportlinkRow } from './models'
 import { isNullOrEmpty, stripGender, trimSpacesAndRemoveDoubleQuotes } from './string-utilities'
 
@@ -130,7 +130,7 @@ const parseCsv = (file: LocalFile) => new Promise<SportlinkRow[]>((resolve, reje
     transform: trimSpacesAndRemoveDoubleQuotes,
     complete: (results: Papa.ParseResult<SportlinkRow>) => {
       if (results.errors && results.errors.length > 0) {
-        reject(results.errors)
+        reject(new Error(formatParseErrors(results.errors)))
       } else {
         resolve(results.data)
       }
@@ -139,3 +139,7 @@ const parseCsv = (file: LocalFile) => new Promise<SportlinkRow[]>((resolve, reje
 
   Papa.parse<SportlinkRow, LocalFile>(file, config)
 })
+
+const formatParseErrors = (errors: ParseError[]): string => errors
+  .map(error => `type: ${error.type}, code: ${error.code}, message: ${error.message}, row: ${error.row}, index: ${error.index}`)
+  .join('\n')

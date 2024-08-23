@@ -77,8 +77,10 @@ John Doe; 35; Software Engineer
 Jane Doe; 30; Doctor
 Robert; Smith; 40; Lawyer; Senior; lala; lalal2; "llaala4`)
 
+      const expectedError = 'type: FieldMismatch, code: TooManyFields, message: Too many fields: expected 3 fields but parsed 8, row: 2, index: undefined'
+
       // Act & assert
-      await expect(converter.convertFileToOutput(file)).rejects.toHaveLength(1)
+      await expect(converter.convertFileToOutput(file)).rejects.toEqual(new Error(expectedError))
     })
 
     it('should return expected object', async () => {
