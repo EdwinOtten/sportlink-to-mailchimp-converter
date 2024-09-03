@@ -17,10 +17,13 @@ updates:
         applies-to: security-updates
         patterns:
         - "*"
-      versionUpdates:
+      minorVersionUpdates:
         applies-to: version-updates
         patterns:
         - "*"
         update-types:
         - "minor"
         - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
