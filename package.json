@@ -6,9 +6,9 @@
   "types": "dist/sportlink-to-mailchimp-converter.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --module umd",
     "lint": "eslint src",
-    "prepublish": "tsc",
+    "prepublish": "tsc --module umd",
     "test": "jest",
     "test:coverage": "jest --coverage=true --coverageDirectory=./coverage",
     "watch": "tsc --watch"
