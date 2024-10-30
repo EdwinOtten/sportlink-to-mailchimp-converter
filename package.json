@@ -2,13 +2,13 @@
   "name": "sportlink-to-mailchimp-converter",
   "version": "0.1.1",
   "description": "A node module that converts Sportlink exports (.csv) into a csv you can import into Mailchimp.",
-  "main": "dist/sportlink-to-mailchimp-converter.js",
-  "types": "dist/sportlink-to-mailchimp-converter.d.ts",
+  "main": "dist/sportlink-to-mailchimp-converter.umd.js",
+  "types": "dist/sportlink-to-mailchimp-converter.umd.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc --module umd",
+    "build": "tsc",
     "lint": "eslint src",
-    "prepublish": "tsc --module umd",
+    "prepublish": "tsc",
     "test": "jest",
     "test:coverage": "jest --coverage=true --coverageDirectory=./coverage",
     "watch": "tsc --watch"
