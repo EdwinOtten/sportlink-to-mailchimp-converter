@@ -31,6 +31,19 @@ A node module that converts Sportlink exports (.csv) into a csv you can import i
     console.log(converter.convertFileToOutput(file))
     ```
 
+4. Using in a browser:
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/sportlink-to-mailchimp-converter/dist/sportlink-to-mailchimp-converter.umd.js"></script>
+    <script>
+      const converter = new SportlinkToMailchimpConverter({
+        nonAthleticsMembershipTypes: ['Gastlid', 'Recreanten', 'Overigen'],
+        athleticsMembershipTypes: ['Atletiek']
+      });
+
+      console.log(converter.convertFileToOutput(file));
+    </script>
+    ```
+
 ## Examples
 
 You can use [example-input.csv](/example-input.csv) to test.

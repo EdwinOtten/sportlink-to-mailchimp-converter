@@ -1,4 +1,4 @@
-import { describe, expect } from 'jest'
+import { describe, expect, it, beforeAll } from '@jest/globals'
 import { SportlinkToMailchimpConverter } from './sportlink-to-mailchimp-converter'
 import { Readable } from 'stream'
 
