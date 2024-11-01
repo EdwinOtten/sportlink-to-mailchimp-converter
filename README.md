@@ -24,7 +24,7 @@ A node module that converts Sportlink exports (.csv) into a csv you can import i
 3. And use it:
     ```js
     const converter = new SportlinkToMailchimpConverter({
-      nonAthleticsMembershipTypes: ['Gastlid', 'Recreanten', 'Overigen'],
+      nonAthleticsMembershipTypes: ['Gastlid', 'Recreanten'],
       athleticsMembershipTypes: ['Atletiek']
     })
 
@@ -44,11 +44,11 @@ A node module that converts Sportlink exports (.csv) into a csv you can import i
     </script>
     ```
 
-## Examples
+### Examples
 
 You can use [example-input.csv](/example-input.csv) to test.
 
-## Config
+### Config
 
 The configuration object looks like this:
 ```ts
