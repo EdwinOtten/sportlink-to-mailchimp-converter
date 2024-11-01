@@ -9,7 +9,7 @@
     "build": "rollup -c",
     "lint": "eslint src",
     "prepublish": "rollup -c",
-    "test": "jest --config jest.config.cjs",
+    "test": "jest",
     "test:coverage": "jest --coverage=true --coverageDirectory=./coverage",
     "watch": "tsc --watch"
   },
