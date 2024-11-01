@@ -32,6 +32,7 @@
   "homepage": "https://github.com/EdwinOtten/sportlink-to-mailchimp-converter#readme",
   "devDependencies": {
     "@jest/globals": "29.1.1",
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.1",
     "@types/jest": "29.1.1",

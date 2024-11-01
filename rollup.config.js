@@ -1,3 +1,4 @@
+import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 
@@ -6,10 +7,14 @@ export default {
   output: {
     file: 'dist/sportlink-to-mailchimp-converter.umd.js',
     format: 'umd',
-    name: 'SportlinkToMailchimpConverter'
+    name: 'SportlinkToMailchimpConverter',
+    sourcemap: true
   },
   plugins: [
     resolve(),
-    typescript()
+    commonjs(),
+    typescript({
+      exclude: ["**/*.test.ts"]
+    })
   ]
 };
