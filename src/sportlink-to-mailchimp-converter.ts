@@ -39,7 +39,7 @@ export class SportlinkToMailchimpConverter {
     return sportlinkContactsToMailchimpSubscribers(
       rows
         .filter(row => !isNullOrEmpty(row['E-mail']))
-        .map((row) => sportlinkRowToContact(row, this.config))
+        .map((row) => sportlinkRowToContact.call(this, row, this.config))
     )
   }
 }
