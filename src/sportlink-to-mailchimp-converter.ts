@@ -16,7 +16,7 @@ export class SportlinkToMailchimpConverter {
   public constructor(private readonly config: SportlinkToMailchimpConverterConfig) {
   }
 
-  public async convertFileToPreview(file: LocalFile): Promise<PreviewResult<MailchimpSubscriber>> {
+  public convertFileToPreview = async (file: LocalFile): Promise<PreviewResult<MailchimpSubscriber>> => {
     return this.parseFileAndConvert(file).then((value) => {
       return {
         columns: Object.getOwnPropertyNames(mailchimpSubscriberProperties),
@@ -25,7 +25,7 @@ export class SportlinkToMailchimpConverter {
     })
   }
 
-  public async convertFileToOutput(file: LocalFile): Promise<OutputResult<string>> {
+  public convertFileToOutput = async (file: LocalFile): Promise<OutputResult<string>> => {
     return this.parseFileAndConvert(file).then((value) => {
       return {
         mimetype: 'text/csv;charset=utf-8;',
@@ -34,12 +34,12 @@ export class SportlinkToMailchimpConverter {
     })
   }
 
-  private async parseFileAndConvert(file: LocalFile): Promise<MailchimpSubscriber[]> {
+  private parseFileAndConvert = async (file: LocalFile): Promise<MailchimpSubscriber[]> => {
     const rows = await parseCsv(file)
     return sportlinkContactsToMailchimpSubscribers(
       rows
         .filter(row => !isNullOrEmpty(row['E-mail']))
-        .map((row) => sportlinkRowToContact.call(this, row, this.config))
+        .map((row) => sportlinkRowToContact(row, this.config))
     )
   }
 }
@@ -76,7 +76,7 @@ const sportlinkRowToContact = (row: SportlinkRow, config: SportlinkToMailchimpCo
   }
 
   // If not tagged yet, assume Athletics
-  if (tags.length == 0) {
+  if (tags.length === 0) {
     tags.push(`Atletiek ${stripGender(categorie)}`)
   }
 
@@ -118,8 +118,7 @@ const contactGroupToMailchimpContact = (email: string, contacts: SportlinkContac
   }
 }
 
-const parseCsv = (file: LocalFile) => new Promise<SportlinkRow[]>((resolve, reject) => {
-
+const parseCsv = async (file: LocalFile) => new Promise<SportlinkRow[]>((resolve, reject) => {
   const config: Papa.ParseLocalConfig<SportlinkRow, LocalFile> = {
     skipEmptyLines: true,
     dynamicTyping: true,
