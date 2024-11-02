@@ -24,7 +24,7 @@ jobs:
       run: npm run build
 
     - name: Copy package.json to dist directory
-      run: cp package.json dist && sed -i 's/\"main\": \".*\"/\"main\": \"sportlink-to-mailchimp-converter.umd.js\"/' dist/package.json && sed -i 's/\"types\": \".*\"/\"types\": \"sportlink-to-mailchimp-converter.umd.d.ts\"/' dist/package.json
+      run: "cp package.json dist && sed -i 's/\"main\": \".*\"/\"main\": \"sportlink-to-mailchimp-converter.umd.js\"/' dist/package.json && sed -i 's/\"types\": \".*\"/\"types\": \"sportlink-to-mailchimp-converter.d.ts\"/' dist/package.json"
 
     - name: Publish to npm
       uses: JS-DevTools/npm-publish@v3
