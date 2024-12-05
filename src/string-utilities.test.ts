@@ -8,6 +8,11 @@ describe('stripGender', () => {
     expect(stripGender('Mannen horloges')).toBe('horloges')
     expect(stripGender('Unisex kleding')).toBe('Unisex kleding') // No gender-related word
   })
+
+  it('should return an empty string for null or undefined values', () => {
+    expect(stripGender(null!)).toBe('')
+    expect(stripGender(undefined!)).toBe('')
+  })
 })
 
 describe('isNullOrEmpty', () => {

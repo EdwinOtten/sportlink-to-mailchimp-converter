@@ -76,7 +76,7 @@ const sportlinkRowToContact = (row: SportlinkRow, config: SportlinkToMailchimpCo
   }
 
   // If not tagged yet, assume Athletics
-  if (tags.length === 0) {
+  if (tags.length === 0 && categorie !== null && categorie !== undefined) {
     tags.push(`Atletiek ${stripGender(categorie)}`)
   }
 
